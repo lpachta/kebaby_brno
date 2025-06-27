@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kebaby_brno/core/data/kebab_entry.dart';
+import 'package:kebaby_brno/core/widgets/app_scaffold_widget.dart';
 import 'package:kebaby_brno/core/widgets/data_view_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:kebaby_brno/firebase/database.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,13 +23,35 @@ class MyApp extends StatelessWidget {
     db.add(entry);
   }
 
+  void onSignedIn(context) {
+    Navigator.pushReplacementNamed(context, '/home');
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final providers = [EmailAuthProvider()];
+
     return MaterialApp(
-      title: 'Flutter Form Example',
-      // home: FormWidget(onSubmit: onSubmit),
-      home: DataView(snapshotStream: db.snapshots),
+      initialRoute: FirebaseAuth.instance.currentUser == null
+          ? '/sign-in'
+          : '/home',
+      routes: {
+        '/sign-in': (context) => SignInScreen(
+          providers: providers,
+          actions: [
+            AuthStateChangeAction<UserCreated>((context, state) {
+              // TODO: New account logic here.
+              onSignedIn(context);
+            }),
+            AuthStateChangeAction<SignedIn>((context, state) {
+              onSignedIn(context);
+            }),
+          ],
+        ),
+        '/home': (context) =>
+            KebabAppScaffold(onSubmit: onSubmit, snapshotStream: db.snapshots),
+      },
       theme: ThemeData(
         // This is the theme of your application.
         //

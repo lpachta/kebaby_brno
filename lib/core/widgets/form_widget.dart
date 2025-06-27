@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:kebaby_brno/core/data/kebab_entry.dart';
 
-class FormWidget extends StatefulWidget {
+class KebabFormWidget extends StatefulWidget {
   final Function(KebabEntry) onSubmit;
 
-  const FormWidget({super.key, required this.onSubmit});
+  const KebabFormWidget({super.key, required this.onSubmit});
 
   @override
-  _FormWidgetState createState() {
-    return _FormWidgetState();
+  _KebabFormWidgetState createState() {
+    return _KebabFormWidgetState();
   }
 }
 
-class _FormWidgetState extends State<FormWidget> {
+class _KebabFormWidgetState extends State<KebabFormWidget> {
   // A key for managing the form
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 

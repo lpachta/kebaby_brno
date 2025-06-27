@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kebaby_brno/core/widgets/tile_widget.dart';
 
-class DataView extends StatelessWidget {
+class KebabDataViewWidget extends StatelessWidget {
   final Stream<QuerySnapshot> snapshotStream;
 
-  const DataView({super.key, required this.snapshotStream});
+  const KebabDataViewWidget({super.key, required this.snapshotStream});
 
   @override
   Widget build(BuildContext context) {
