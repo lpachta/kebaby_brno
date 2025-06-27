@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "551743481101",
+    "project_id": "kebabybrno",
+    "storage_bucket": "kebabybrno.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:551743481101:android:761563e777183c4f087c44",
+        "android_client_info": {
+          "package_name": "com.example.kebaby_brno"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzJyaozjXNFW0b86XadQmQI2g2T0t9dfc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

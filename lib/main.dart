@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:kebaby_brno/core/widgets/form_widget.dart';
+import 'package:kebaby_brno/core/data/kebab_entry.dart';
+import 'package:kebaby_brno/core/widgets/data_view_widget.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:kebaby_brno/firebase/database.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(MyApp(db: KebabDatabase()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key, required this.db});
+
+  final KebabDatabase db;
+
+  void onSubmit(KebabEntry entry) {
+    db.add(entry);
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Form Example',
-      home: FormWidget(),
+      // home: FormWidget(onSubmit: onSubmit),
+      home: DataView(snapshotStream: db.snapshots),
       theme: ThemeData(
         // This is the theme of your application.
         //

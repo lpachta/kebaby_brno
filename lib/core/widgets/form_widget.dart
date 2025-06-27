@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:kebaby_brno/core/data/kebab_entry.dart';
 
 class FormWidget extends StatefulWidget {
+  final Function(KebabEntry) onSubmit;
+
+  const FormWidget({super.key, required this.onSubmit});
+
   @override
   _FormWidgetState createState() {
     return _FormWidgetState();
@@ -26,14 +30,14 @@ class _FormWidgetState extends State<FormWidget> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       KebabEntry newEntry = KebabEntry(
-        _name,
-        _adress,
-        _type,
-        _price,
-        _discount,
-        _foodRating.toInt(),
-        _vibeRating.toInt(),
-        _notes,
+        accountName: _name,
+        address: _adress,
+        type: _type,
+        price: _price,
+        discount: _discount,
+        foodRating: _foodRating.toInt(),
+        vibeRating: _vibeRating.toInt(),
+        notes: _notes,
       );
       showDialog(
         context: context,
@@ -53,6 +57,8 @@ class _FormWidgetState extends State<FormWidget> {
           );
         },
       );
+
+      widget.onSubmit(newEntry);
     }
   }
 
@@ -66,207 +72,209 @@ class _FormWidgetState extends State<FormWidget> {
         backgroundColor: theme.primaryColor,
         foregroundColor: theme.secondaryHeaderColor,
       ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Jméno Inšpektóra',
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: theme.primaryColor,
-                      width: 2.0,
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Jméno Inšpektóra',
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: theme.primaryColor,
+                        width: 2.0,
+                      ),
                     ),
                   ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Prosím zadejte své jméno.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _name = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Prosím zadejte své jméno.';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _name = value!;
-                },
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Adresa zkoumaného subjektu',
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: theme.primaryColor,
-                      width: 2.0,
+                SizedBox(height: 20),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Adresa zkoumaného subjektu',
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: theme.primaryColor,
+                        width: 2.0,
+                      ),
                     ),
                   ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Prosím zadejte adresu prodejce.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _adress = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Prosím zadejte adresu prodejce.';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _adress = value!;
-                },
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Typ Kebabu',
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: theme.primaryColor,
-                      width: 2.0,
+                SizedBox(height: 20),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Typ Kebabu',
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: theme.primaryColor,
+                        width: 2.0,
+                      ),
                     ),
                   ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Prosím zadejte typ pojíného kebabu.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _type = value!;
+                  },
                 ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Prosím zadejte typ pojíného kebabu.';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _type = value!;
-                },
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Cena Kebabu v Kč',
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: theme.primaryColor,
-                            width: 2.0,
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Cena Kebabu v Kč',
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: theme.primaryColor,
+                              width: 2.0,
+                            ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null) {
+                            return "Zadejte cenu kebabu.";
+                          }
+                          if (int.tryParse(value) == null) {
+                            return "Pole musí být celočíselné";
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _price = int.tryParse(value!)!;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null) {
-                          return "Zadejte cenu kebabu.";
-                        }
-                        if (int.tryParse(value) == null) {
-                          return "Pole musí být celočíselné";
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _price = int.tryParse(value!)!;
-                      },
                     ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Možná Sleva v Kč',
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: theme.primaryColor,
-                            width: 2.0,
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Možná Sleva v Kč',
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: theme.primaryColor,
+                              width: 2.0,
+                            ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null) {
+                            return "Zadejte možnou slevu.";
+                          }
+                          if (int.tryParse(value) == null) {
+                            return "Pole musí být celočíselné";
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _discount = int.tryParse(value!)!;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null) {
-                          return "Zadejte možnou slevu.";
-                        }
-                        if (int.tryParse(value) == null) {
-                          return "Pole musí být celočíselné";
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _discount = int.tryParse(value!)!;
-                      },
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                //crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(width: 80, child: Text("Rating Jídla: ")),
-                  Expanded(
-                    child: Slider(
-                      value: _foodRating,
-                      min: 0,
-                      max: 100,
-                      divisions: 100,
-                      // gives 0.1 steps
-                      label: _foodRating.toStringAsFixed(0),
-                      onChanged: (value) {
-                        setState(() {
-                          _foodRating = value;
-                        });
-                      },
+                  ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 80, child: Text("Rating Jídla: ")),
+                    Expanded(
+                      child: Slider(
+                        value: _foodRating,
+                        min: 0,
+                        max: 100,
+                        divisions: 100,
+                        // gives 0.1 steps
+                        label: _foodRating.toStringAsFixed(0),
+                        onChanged: (value) {
+                          setState(() {
+                            _foodRating = value;
+                          });
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                //crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(width: 80, child: Text("Vibe rating: ")),
-                  Expanded(
-                    child: Slider(
-                      value: _vibeRating,
-                      min: 0,
-                      max: 100,
-                      divisions: 100,
-                      // gives 0.1 steps
-                      label: _vibeRating.toStringAsFixed(0),
-                      onChanged: (value) {
-                        setState(() {
-                          _vibeRating = value;
-                        });
-                      },
+                  ],
+                ),
+                Row(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 80, child: Text("Vibe rating: ")),
+                    Expanded(
+                      child: Slider(
+                        value: _vibeRating,
+                        min: 0,
+                        max: 100,
+                        divisions: 100,
+                        // gives 0.1 steps
+                        label: _vibeRating.toStringAsFixed(0),
+                        onChanged: (value) {
+                          setState(() {
+                            _vibeRating = value;
+                          });
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                onSaved: (value) {
-                  _notes = value ?? '';
-                },
-                minLines: 5,
-                maxLines: null,
-                decoration: InputDecoration(
-                  alignLabelWithHint: true,
-                  labelText: 'Poznámky',
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: theme.primaryColor,
-                      width: 2.0,
+                  ],
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  onSaved: (value) {
+                    _notes = value ?? '';
+                  },
+                  minLines: 5,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    alignLabelWithHint: true,
+                    labelText: 'Poznámky',
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: theme.primaryColor,
+                        width: 2.0,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: Text("Submit"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.primaryColor,
-                  foregroundColor: theme.cardColor,
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _submitForm,
+                  child: Text("Submit"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.primaryColor,
+                    foregroundColor: theme.cardColor,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
