@@ -62,7 +62,11 @@ class KebabTile extends StatelessWidget {
                 ),
                 if (discount != null) ...[
                   const SizedBox(width: 10),
-                  Icon(Icons.percent, color: Colors.redAccent, size: 18),
+                  Icon(
+                    Icons.keyboard_double_arrow_down,
+                    color: Colors.redAccent,
+                    size: 18,
+                  ),
                   Text(
                     '-$discount Kč',
                     style: const TextStyle(color: Colors.red),
