@@ -29,7 +29,7 @@ class _KebabAppScaffoldState extends State<KebabAppScaffold> {
   int _selectedIndex = 0;
 
   List<Widget> get _pages => [
-    KebabFormWidget(onSubmit: widget.onSubmit),
+    KebabFormWidget(onSubmit: widget.onSubmit, user: widget.user),
     KebabDataViewWidget(snapshotStream: widget.snapshotStream),
     KebabSettingsWidget(),
   ];
@@ -43,13 +43,17 @@ class _KebabAppScaffoldState extends State<KebabAppScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_titles[_selectedIndex])),
+      appBar: AppBar(
+        title: Text(_titles[_selectedIndex]),
+        foregroundColor: Theme.of(context).cardColor,
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.green),
+            DrawerHeader(
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
               child: Text('Navigation', style: TextStyle(color: Colors.white)),
             ),
             ListTile(

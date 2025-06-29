@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:kebaby_brno/core/data/kebab_entry.dart';
+import 'package:kebaby_brno/core/data/user_entry.dart';
 
 class KebabFormWidget extends StatefulWidget {
   final Function(KebabEntry) onSubmit;
+  final UserEntry user;
 
-  const KebabFormWidget({super.key, required this.onSubmit});
+  const KebabFormWidget({
+    super.key,
+    required this.onSubmit,
+    required this.user,
+  });
 
   @override
   _KebabFormWidgetState createState() {
@@ -67,11 +73,6 @@ class _KebabFormWidgetState extends State<KebabFormWidget> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Kebabový Formulář'),
-        backgroundColor: theme.primaryColor,
-        foregroundColor: theme.secondaryHeaderColor,
-      ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -80,6 +81,8 @@ class _KebabFormWidgetState extends State<KebabFormWidget> {
             child: Column(
               children: <Widget>[
                 TextFormField(
+                  initialValue: widget.user.userName,
+                  readOnly: true,
                   decoration: InputDecoration(
                     labelText: 'Jméno Inšpektóra',
                     border: OutlineInputBorder(),
