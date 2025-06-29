@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kebaby_brno/firebase/database.dart';
+import 'package:kebaby_brno/core/firebase/database.dart';
 
 import 'package:kebaby_brno/main.dart';
 

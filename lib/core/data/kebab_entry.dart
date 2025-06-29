@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class KebabEntry {
   String accountName;
   String address;
@@ -7,6 +9,7 @@ class KebabEntry {
   int foodRating;
   int vibeRating;
   String? notes;
+  final date = FieldValue.serverTimestamp();
 
   KebabEntry({
     required this.accountName,
@@ -21,7 +24,7 @@ class KebabEntry {
 
   @override
   String toString() {
-    return 'KebabEntry{accountName: $accountName, address: $address, type: $type, price: $price, discount: $discount, foodRating: $foodRating, vibeRating: $vibeRating, notes: $notes}';
+    return 'KebabEntry{accountName: $accountName, address: $address, type: $type, price: $price, discount: $discount, foodRating: $foodRating, vibeRating: $vibeRating, notes: $notes, date: $date}';
   }
 
   Map<String, dynamic> toJson() {
@@ -34,19 +37,7 @@ class KebabEntry {
       "foodRating": foodRating,
       "vibeRating": vibeRating,
       "notes": notes,
+      "date": date,
     };
-  }
-
-  factory KebabEntry.fromJson(Map<String, dynamic> json) {
-    return KebabEntry(
-      accountName: json['accountName'] ?? '',
-      address: json['address'] ?? '',
-      type: json['type'] ?? '',
-      price: (json['price'] ?? 0) as int,
-      discount: (json['discount'] ?? 0).toInt(),
-      foodRating: (json['foodRating'] ?? 0).toInt(),
-      vibeRating: (json['vibeRating'] ?? 0).toInt(),
-      notes: json['notes'] ?? '',
-    );
   }
 }

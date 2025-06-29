@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:kebaby_brno/core/data/kebab_entry.dart';
+import 'package:kebaby_brno/core/data/user_entry.dart';
 import 'package:kebaby_brno/core/widgets/app_scaffold_widget.dart';
-import 'package:kebaby_brno/core/widgets/data_view_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:kebaby_brno/core/widgets/settings_widget.dart';
 import 'firebase_options.dart';
-import 'package:kebaby_brno/firebase/database.dart';
+import 'package:kebaby_brno/core/firebase/database.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:kebaby_brno/core/widgets/enter_user_name_dialog.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MyApp(db: KebabDatabase()));
+  var myApp = MyApp(db: KebabDatabase());
+  runApp(myApp);
 }
 
 class MyApp extends StatelessWidget {
@@ -19,9 +22,7 @@ class MyApp extends StatelessWidget {
 
   final KebabDatabase db;
 
-  void onSubmit(KebabEntry entry) {
-    db.add(entry);
-  }
+  void onSubmit(KebabEntry entry) => db.addKebab(entry);
 
   void onSignedIn(context) {
     Navigator.pushReplacementNamed(context, '/home');
@@ -40,8 +41,19 @@ class MyApp extends StatelessWidget {
         '/sign-in': (context) => SignInScreen(
           providers: providers,
           actions: [
-            AuthStateChangeAction<UserCreated>((context, state) {
-              // TODO: New account logic here.
+            AuthStateChangeAction<UserCreated>((context, state) async {
+              // TODO: Add new account to the database
+              final user = state.credential.user;
+              final userName = await enter_user_name_dialogue(
+                context: context,
+                currentUserName: null,
+                db: db,
+              );
+              if (user == null || user.email == null) {
+                throw "user or email is null";
+              }
+              db.addUser(UserEntry(email: user.email!, userName: userName));
+
               onSignedIn(context);
             }),
             AuthStateChangeAction<SignedIn>((context, state) {
@@ -49,8 +61,11 @@ class MyApp extends StatelessWidget {
             }),
           ],
         ),
-        '/home': (context) =>
-            KebabAppScaffold(onSubmit: onSubmit, snapshotStream: db.snapshots),
+        '/home': (context) => KebabAppScaffold(
+          onSubmit: onSubmit,
+          snapshotStream: db.kebabSnapshots,
+        ),
+        '/settings': (context) => const KebabSettingsWidget(),
       },
       theme: ThemeData(
         // This is the theme of your application.

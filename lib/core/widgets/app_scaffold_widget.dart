@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kebaby_brno/core/widgets/settings_widget.dart';
 import 'data_view_widget.dart';
 import 'form_widget.dart';
 
@@ -23,6 +24,7 @@ class _KebabAppScaffoldState extends State<KebabAppScaffold> {
   List<Widget> get _pages => [
     KebabFormWidget(onSubmit: widget.onSubmit),
     KebabDataViewWidget(snapshotStream: widget.snapshotStream),
+    KebabSettingsWidget(),
   ];
 
   final _titles = ['Home', 'Favorites', 'Settings'];
