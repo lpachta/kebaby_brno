@@ -1,12 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class UserEntry {
   String email;
   String userName;
-  List<String> permissions = ["add", 'edit_own']; // edit_all, admin
-  final date = FieldValue.serverTimestamp();
+  List<String> permissions; // edit_all, admin
+  final date;
 
-  UserEntry({required this.email, required this.userName});
+  UserEntry({
+    required String this.email,
+    required String this.userName,
+    List<String>? permissions,
+    this.date,
+  }) : this.permissions = permissions ?? ['add', 'edit_own'];
 
   Map<String, dynamic> toJson() => {
     "email": email,
@@ -14,4 +17,8 @@ class UserEntry {
     "permissions": permissions,
     "date": date,
   };
+
+  factory UserEntry.fromJson(Map<String, dynamic> json) {
+    return UserEntry(email: json['email'], userName: json['userName']);
+  }
 }

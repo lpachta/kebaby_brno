@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kebaby_brno/core/data/kebab_entry.dart';
+import 'package:kebaby_brno/core/data/user_entry.dart';
+import 'package:kebaby_brno/core/firebase/database.dart';
 import 'package:kebaby_brno/core/widgets/settings_widget.dart';
 import 'data_view_widget.dart';
 import 'form_widget.dart';
 
 class KebabAppScaffold extends StatefulWidget {
-  final onSubmit;
+  final KebabDatabase db;
   final snapshotStream;
+  final UserEntry user;
 
   @override
   State<KebabAppScaffold> createState() => _KebabAppScaffoldState();
 
-  const KebabAppScaffold({
+  KebabAppScaffold({
     super.key,
-    required this.onSubmit,
-    required this.snapshotStream,
-  });
+    required this.db,
+    required this.user,
+    snapshotStream,
+  }) : snapshotStream = snapshotStream ?? db.kebabSnapshots;
+
+  void onSubmit(KebabEntry entry) => db.addKebab(entry);
 }
 
 class _KebabAppScaffoldState extends State<KebabAppScaffold> {
@@ -27,7 +34,11 @@ class _KebabAppScaffoldState extends State<KebabAppScaffold> {
     KebabSettingsWidget(),
   ];
 
-  final _titles = ['Home', 'Favorites', 'Settings'];
+  late final _titles = [
+    "Ahoj, ${widget.user.userName}!",
+    'Favorites',
+    'Settings',
+  ];
 
   @override
   Widget build(BuildContext context) {

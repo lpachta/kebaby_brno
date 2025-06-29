@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kebaby_brno/core/data/kebab_entry.dart';
 import 'package:kebaby_brno/core/data/user_entry.dart';
 import 'package:kebaby_brno/core/widgets/app_scaffold_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,76 +12,80 @@ import 'package:kebaby_brno/core/widgets/enter_user_name_dialog.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  var myApp = MyApp(db: KebabDatabase());
+  var myApp = MyApp();
   runApp(myApp);
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key, required this.db});
+  MyApp({super.key});
 
-  final KebabDatabase db;
+  final KebabDatabase db = KebabDatabase();
 
-  void onSubmit(KebabEntry entry) => db.addKebab(entry);
-
-  void onSignedIn(context) {
-    Navigator.pushReplacementNamed(context, '/home');
-  }
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final providers = [EmailAuthProvider()];
 
     return MaterialApp(
-      initialRoute: FirebaseAuth.instance.currentUser == null
-          ? '/sign-in'
-          : '/home',
-      routes: {
-        '/sign-in': (context) => SignInScreen(
-          providers: providers,
-          actions: [
-            AuthStateChangeAction<UserCreated>((context, state) async {
-              // TODO: Add new account to the database
-              final user = state.credential.user;
-              final userName = await enter_user_name_dialogue(
-                context: context,
-                currentUserName: null,
-                db: db,
-              );
-              if (user == null || user.email == null) {
-                throw "user or email is null";
-              }
-              db.addUser(UserEntry(email: user.email!, userName: userName));
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          final User? user = snapshot.data;
 
-              onSignedIn(context);
-            }),
-            AuthStateChangeAction<SignedIn>((context, state) {
-              onSignedIn(context);
-            }),
-          ],
-        ),
-        '/home': (context) => KebabAppScaffold(
-          onSubmit: onSubmit,
-          snapshotStream: db.kebabSnapshots,
-        ),
-        '/settings': (context) => const KebabSettingsWidget(),
-      },
+          /// Waiting
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          /// User is not signed in
+          if (user == null) {
+            return SignInScreen(
+              providers: providers,
+              actions: [
+                AuthStateChangeAction<UserCreated>((context, state) async {
+                  final User? user = state.credential.user;
+                  final userName = await enter_user_name_dialogue(
+                    context: context,
+                    currentUserName: null,
+                    db: db,
+                  );
+                  if (user == null || user.email == null) {
+                    throw "user or email is null";
+                  }
+                  db.addUser(
+                    UserEntry(email: user.email!, userName: userName),
+                    user.uid,
+                  );
+                }),
+              ],
+            );
+
+            /// User is signed in
+          } else {
+            return FutureBuilder(
+              future: db.getUserWithId(user.uid),
+              builder: (context, snapshot) {
+                if (snapshot.data == null) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                final mapTemp = snapshot.data!.data();
+                if (mapTemp == null) {
+                  throw ("mapTemp should not be null because it should have been in the database what");
+                }
+
+                final UserEntry foundUser = UserEntry.fromJson(mapTemp);
+
+                return KebabAppScaffold(db: db, user: foundUser);
+              },
+            );
+          }
+        },
+      ),
+      routes: {'/settings': (context) => const KebabSettingsWidget()},
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(
           seedColor: Color(0x228b22),
           brightness: Brightness.light,

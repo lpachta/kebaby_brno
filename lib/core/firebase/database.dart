@@ -17,11 +17,11 @@ class KebabDatabase {
         .onError((e, _) => print("Error writing document: $e"));
   }
 
-  void addUser(UserEntry data) async {
+  void addUser(UserEntry data, uid) async {
     //await _db.collection(COLLECTION_NAME).add(data.toJson());
     _db
         .collection(USER_COLLECTION_NAME)
-        .doc()
+        .doc(uid)
         .set(data.toJson())
         .onError((e, _) => print("Error writing document: $e"));
   }
@@ -44,8 +44,7 @@ class KebabDatabase {
     return await _db.collection(USER_COLLECTION_NAME).get();
   }
 
-  /// id is email
-  getUserWithId(String id) {
+  Future<DocumentSnapshot<Map<String, dynamic>>> getUserWithId(String id) {
     return _db.collection(USER_COLLECTION_NAME).doc(id).get();
   }
 }
